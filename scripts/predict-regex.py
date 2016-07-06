@@ -27,6 +27,23 @@ def loadData():
 
     return {'data': {'bgs': data_bgs, 'job': data_job}}
 
+def writeData(merged_dict):
+
+    DIR_DATA = '../data-products/'
+    FILENAME_BGS = 'bgs_costing-job_numbers_training-set.csv'
+    FILENAME_JOB_NO = 'jobstatus-job_numbers_training-set.csv'
+
+    for data_name in merged_dict:
+        df = merged_dict[data_name]
+        if 'bgs' in data_name:
+            filename = FILENAME_BGS
+        else:
+            filename = FILENAME_JOB_NO
+
+        df.to_csv(DIR_DATA + filename,
+                  index=False,
+                  header=True,
+                  )
 
 def addFakeData(data_dict):
 
@@ -43,7 +60,10 @@ def addFakeData(data_dict):
         for element in data:
             data_string += str(element)
 
-        n_strings = len(data)
+        # Number of strings to randomly generate
+        n_strings = len(data) * 10
+        n_strings = int(n_strings)
+
         unique_characters = ''.join(set(data_string))
         #unique_characters = np.unique(data_string)
 
@@ -71,6 +91,28 @@ def addFakeData(data_dict):
 
     return data_dict
 
+def mergeDatasets(data_dict):
+
+    # Add valid = yes for data and valid = no for fakes
+    for df_name in data_dict['data']:
+        df = data_dict['data'][df_name]
+        df['valid'] = pd.Series(1, df.index)
+    for df_name in data_dict['fake']:
+        df = data_dict['fake'][df_name]
+        df['valid'] = pd.Series(0, df.index)
+
+
+    # merge dfs
+    merged_dict = {}
+    for dataset_name in data_dict['data']:
+        df_data = data_dict['data'][dataset_name]
+        df_fake = data_dict['fake'][dataset_name]
+
+        df_merged = pd.concat([df_data, df_fake])
+        merged_dict[dataset_name] = df_merged
+
+    return merged_dict
+
 def main():
 
     ''' Runs main function.
@@ -86,12 +128,12 @@ def main():
     #print data_dict['fake']['bgs']
 
     data = data_dict['fake']['job']['string'].values
-    matches = lm.getRegexMatches(data,
-                                 r'\d{6}',
-                                 )
 
-    print len(data)
-    print np.sum(matches)
+    # merge datasets to have valid and invalid input
+    merged_dict = mergeDatasets(data_dict)
+
+    writeData(merged_dict)
+
 
 
 if __name__ == '__main__':
