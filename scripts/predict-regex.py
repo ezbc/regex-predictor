@@ -111,10 +111,11 @@ def writeJSONdata(merged_dict):
             pos += len(string) + 1
 
         # gather the data
-        examples = {'string': example_string,
+        examples = [{'string': example_string,
                     'match': match,
                     'unmatch': unmatch,
-                    }
+                    },
+                    ]
         json_dict['examples'] = examples
 
         # write the data
@@ -187,8 +188,6 @@ def mergeDatasets(data_dict):
         merged_dict[dataset_name] = df_merged
 
     return merged_dict
-
-
 
 
 def main():
