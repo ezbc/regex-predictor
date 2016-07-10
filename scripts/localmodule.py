@@ -97,6 +97,3 @@ def getRegexMatches(data, pattern):
 
     return matches
 
-
-#def modelRegexExp(data):
-
