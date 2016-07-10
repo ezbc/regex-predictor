@@ -138,7 +138,7 @@ def addFakeData(data_dict):
             data_string += str(element)
 
         # Number of strings to randomly generate
-        n_strings = len(data) * 10
+        n_strings = len(data) * 1
         n_strings = int(n_strings)
 
         unique_characters = ''.join(set(data_string))
