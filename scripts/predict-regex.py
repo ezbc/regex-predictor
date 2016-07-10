@@ -91,8 +91,8 @@ def writeJSONdata(merged_dict):
         match = []
         unmatch = []
         pos = 0
-        #for i in xrange(len(df)):
-        for i in xrange(10):
+        for i in xrange(len(df)):
+        #for i in xrange(10):
             # grab the data from the DataFrame
             string = df.iloc[[i]]['string'].values[0]
             valid = df.iloc[[i]]['valid'].values[0]
@@ -106,8 +106,6 @@ def writeJSONdata(merged_dict):
                 match.append(flag)
             elif not valid:
                 unmatch.append(flag)
-
-            print flag, len(example_string)
 
             # move position to next string
             pos += len(string)
@@ -140,7 +138,7 @@ def addFakeData(data_dict):
             data_string += str(element)
 
         # Number of strings to randomly generate
-        n_strings = len(data) * 0.1
+        n_strings = len(data) * 10
         n_strings = int(n_strings)
 
         unique_characters = ''.join(set(data_string))
