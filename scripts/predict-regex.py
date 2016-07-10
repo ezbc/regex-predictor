@@ -122,6 +122,84 @@ def writeJSONdata(merged_dict):
         # write the data
         json.dump(json_dict, open(filename, 'w'), indent=4)
 
+def writeJSONdata(merged_dict):
+
+    ''' File format
+
+    {
+      "name": "Log/MAC",
+      "description": "",
+      "regexTarget": "",
+      "examples": [
+        {
+        "string": "Jan 12 06:26:19: ACCEPT service http from 119.63.193.196 to firewall(pub-nic), prefix: \"none\" (in: eth0 119.63.193.196(5c:0a:5b:63:4a:82):4399 -> 140.105.63.164(50:06:04:92:53:44):80 TCP flags: ****S* len:60 ttl:32)",
+        "match": [
+            { "start": 119, "end": 136 },
+            { "start": 161, "end": 178 }
+        ],
+        "unmatch": [
+            {"start": 0,"end": 119},
+            {"start": 136,"end": 161},
+            {"start": 178,"end": 215}
+        ]
+        },
+      ]
+    }
+
+
+    '''
+
+    import json
+
+    DIR_DATA = '../data-products/'
+    FILENAME_BGS = 'bgs_costing-job_numbers_training-set.json'
+    FILENAME_JOB_NO = 'jobstatus-job_numbers_training-set.json'
+
+    for data_name in merged_dict:
+        df = merged_dict[data_name]
+        if 'bgs' in data_name:
+            filename = DIR_DATA + FILENAME_BGS
+        else:
+            filename = DIR_DATA + FILENAME_JOB_NO
+
+        json_dict = {'name': data_name,
+                     }
+        example_string = ''
+        examples = []
+        for i in xrange(len(df)):
+            match = []
+            unmatch = []
+            pos = 0
+            #for i in xrange(10):
+            # grab the data from the DataFrame
+            string = df.iloc[[i]]['string'].values[0]
+            valid = df.iloc[[i]]['valid'].values[0]
+
+            # add the new string to the single example
+            example_string = string
+
+            # add the start and end position of the flagged string
+            flag = {'start': pos, 'end': pos + len(string) - 1}
+            if valid:
+                match.append(flag)
+            elif not valid:
+                unmatch.append(flag)
+
+            # move position to next string
+            pos += len(string)
+
+
+            # gather the data
+            examples.append({'string': example_string,
+                        'match': match,
+                        'unmatch': unmatch,
+                        })
+
+        json_dict['examples'] = examples
+
+        # write the data
+        json.dump(json_dict, open(filename, 'w'), indent=4)
+
 def addFakeData(data_dict):
 
     import localmodule as lm
