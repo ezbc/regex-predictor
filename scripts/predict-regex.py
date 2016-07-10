@@ -101,14 +101,17 @@ def writeJSONdata(merged_dict):
             example_string += string
 
             # add the start and end position of the flagged string
-            flag = {'start': pos, 'end': pos + len(string)}
+            flag = {'start': pos, 'end': pos + len(string) - 1}
             if valid:
                 match.append(flag)
             elif not valid:
                 unmatch.append(flag)
 
+            print flag, len(example_string)
+
             # move position to next string
-            pos += len(string) + 1
+            pos += len(string)
+
 
         # gather the data
         examples = [{'string': example_string,
