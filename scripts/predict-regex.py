@@ -166,7 +166,15 @@ def writeJSONdata(merged_dict):
                      }
         example_string = ''
         examples = []
-        for i in xrange(len(df)):
+        valid_rows = np.where(df['valid'] == 1)[0]
+        invalid_rows = np.where(df['valid'] == 0)[0]
+        rows = np.concatenate((np.random.choice(valid_rows, size=100),
+                               np.random.choice(invalid_rows, size=100),
+                               ),
+                              )
+
+        #for i in xrange(len(df)):
+        for i in rows:
             match = []
             unmatch = []
             pos = 0
